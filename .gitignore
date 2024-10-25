@@ -1,0 +1,51 @@
+# Бинарные файлы, кэш и временные файлы
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Tt]estResults/
+
+# Настройки пользовательского кэша
+.Python/
+.vscode/
+.idea/
+.vs/
+
+# Файлы настроек IDE
+*.sln
+*.userprefs
+*.csproj
+*.pidb
+*.user
+
+# Прочие игнорируемые файлы
+*.unityproj
+*.booproj
+*.pidb.meta
+*.mdb
+*.pdb
+
+# Проектные файлы
+*.apk
+*.unitypackage
+*.tmp
+*.bak
+
+# Артефакты сборки
+*.dll
+*.exe
+*.app
+*.appx
+*.aab
+
+# Файлы кэша плагинов
+*.caches/
+
+# Директории плагинов
+Plugins/
+
+# Файлы настроек Unity
+*.gradle
+
