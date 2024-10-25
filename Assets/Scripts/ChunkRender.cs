@@ -5,10 +5,11 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class ChunkRender : MonoBehaviour
 {
-    private const int ChunkWidth = 10;
-    private const int ChunkHeight = 128;
+    public const int ChunkWidth = 10;
+    public const int ChunkHeight = 128;
+    public const float BlockScale = .5f;
 
-    public int[,,] Blocks = new int[ChunkWidth, ChunkHeight, ChunkWidth];
+    public BlockType[,,] Blocks = new BlockType[ChunkWidth, ChunkHeight, ChunkWidth];
 
     private List<Vector3> verticies = new List<Vector3>();
     private List<int> triangles = new List<int>();
@@ -17,8 +18,7 @@ public class ChunkRender : MonoBehaviour
     {
         Mesh chunkMesh = new Mesh();
 
-        Blocks[0, 0, 0] = 1;
-        Blocks[0, 0, 1] = 1;
+        Blocks = TerrainGenerator.GenerateTerrain((int)transform.position.x, (int)transform.position.z );
 
         for (int y = 0; y < ChunkHeight; y++)
         {
@@ -36,10 +36,13 @@ public class ChunkRender : MonoBehaviour
         chunkMesh.vertices = verticies.ToArray();
         chunkMesh.triangles = triangles.ToArray();
 
+        chunkMesh.Optimize();
+
         chunkMesh.RecalculateNormals();
         chunkMesh.RecalculateBounds();
 
         GetComponent<MeshFilter>().mesh = chunkMesh;
+        GetComponent<MeshCollider>().sharedMesh = chunkMesh;
     }
 
     private void GenerateBlock(int x, int y, int z)
@@ -57,7 +60,7 @@ public class ChunkRender : MonoBehaviour
         if (GetBlockAtPosition(blockPosition + Vector3Int.down) == 0) GenerateBottomSide(blockPosition);
     }
 
-    private int GetBlockAtPosition(Vector3Int blockPostition)
+    private BlockType GetBlockAtPosition(Vector3Int blockPostition)
     {
         if(blockPostition.x >= 0 && blockPostition.x < ChunkWidth &&
             blockPostition.y >= 0 && blockPostition.y < ChunkHeight &&
@@ -65,65 +68,65 @@ public class ChunkRender : MonoBehaviour
         {
             return Blocks[blockPostition.x, blockPostition.y, blockPostition.z];
         }
-        else return 0;
+        else return BlockType.Air;
     }
 
     private void GenerateRightSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(1, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 0, 1) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 1) + blockPostition);
+        verticies.Add((new Vector3(1, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 0, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 1) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
 
     private void GenerateLeftSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(0, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(0, 0, 1) + blockPostition);
-        verticies.Add(new Vector3(0, 1, 0) + blockPostition);
-        verticies.Add(new Vector3(0, 1, 1) + blockPostition);
+        verticies.Add((new Vector3(0, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 0, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 1, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 1, 1) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
 
     private void GenerateFrontSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(0, 0, 1) + blockPostition);
-        verticies.Add(new Vector3(1, 0, 1) + blockPostition);
-        verticies.Add(new Vector3(0, 1, 1) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 1) + blockPostition);
+        verticies.Add((new Vector3(0, 0, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 0, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 1, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 1) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
 
     private void GenerateBackSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(0, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(0, 1, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 0) + blockPostition);
+        verticies.Add((new Vector3(0, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 1, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 0) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
 
     private void GenerateTopSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(0, 1, 0) + blockPostition);
-        verticies.Add(new Vector3(0, 1, 1) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 1, 1) + blockPostition);
+        verticies.Add((new Vector3(0, 1, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 1, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 1, 1) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
 
     private void GenerateBottomSide(Vector3Int blockPostition)
     {
-        verticies.Add(new Vector3(0, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(1, 0, 0) + blockPostition);
-        verticies.Add(new Vector3(0, 0, 1) + blockPostition);
-        verticies.Add(new Vector3(1, 0, 1) + blockPostition);
+        verticies.Add((new Vector3(0, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 0, 0) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(0, 0, 1) + blockPostition) * BlockScale);
+        verticies.Add((new Vector3(1, 0, 1) + blockPostition) * BlockScale);
 
         AddLastVerticalSquare();
     }
